@@ -30,13 +30,6 @@ class PostTypeProvider implements ServiceProviderInterface
     private readonly PostTypeRegistry $postTypes;
 
     /**
-     * Configuration object.
-     *
-     * @var \N7e\Configuration\ConfigurationInterface
-     */
-    private readonly ConfigurationInterface $configuration;
-
-    /**
      * Dependency injection container.
      *
      * @var \N7e\DependencyInjection\ContainerInterface
@@ -60,10 +53,12 @@ class PostTypeProvider implements ServiceProviderInterface
     #[Override]
     public function load(ContainerInterface $container): void
     {
-        $this->configuration = $container->get(ConfigurationInterface::class);
         $this->container = $container;
 
-        foreach ($this->configuration->get('postTypes', []) as $postType) {
+        /** @var \N7e\Configuration\ConfigurationInterface $configuration */
+        $configuration = $container->get(ConfigurationInterface::class);
+
+        foreach ($configuration->get('postTypes', []) as $postType) {
             $this->register($postType);
         }
     }
