@@ -113,7 +113,7 @@ final class PostTypeRegistry
             add_meta_box(
                 $metaBox->id(),
                 $metaBox->title(),
-                static fn() => $metaBox->render($post),
+                static fn() => print $metaBox->render($post),
                 null,
                 $metaBox->context(),
                 $metaBox->priority()

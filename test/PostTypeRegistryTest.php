@@ -180,6 +180,30 @@ final class PostTypeRegistryTest extends TestCase
     }
 
     #[Test]
+    public function shouldEchoRenderedMetaBox(): void
+    {
+        $output = 'output';
+
+        $this->expectOutputString($output);
+
+        $this->getFunctionMock(__NAMESPACE__, 'add_action')
+            ->expects($this->once())
+            ->with('init', $this->isCallable())
+            ->willReturnCallback(static fn($hook, $callback) => $callback());
+        $this->getFunctionMock(__NAMESPACE__, 'register_post_type')
+            ->expects($this->once())
+            ->willReturnCallback(fn($key, $array) => $array['register_meta_box_cb']($this->postMock));
+        $this->getFunctionMock(__NAMESPACE__, 'remove_post_type_support');
+        $this->getFunctionMock(__NAMESPACE__, 'add_meta_box')
+            ->expects($this->once())
+            ->willReturnCallback(fn($id, $title, $renderCallback) => $renderCallback($this->postMock));
+        $this->metaBoxMock->method('render')->willReturn($output);
+
+        $this->postTypeMock->metaBoxes->add($this->metaBoxMock);
+        $this->registry->register($this->postTypeMock);
+    }
+
+    #[Test]
     public function shouldRegisterTaxonomies(): void
     {
         $this->getFunctionMock(__NAMESPACE__, 'add_action')
