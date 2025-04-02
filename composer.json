@@ -28,13 +28,16 @@
     "autoload-dev": {
         "psr-4": {
             "N7e\\WordPress\\": "test/"
-        }
+        },
+        "classmap": [
+            "vendor/johnpbloch/wordpress-core"
+        ]
     },
     "require": {
         "php": ">=8.3",
         "n7e/service-provider": "^0.2.0",
         "n7e/configuration": "^0.2.2",
-        "n7e/wordpress-post-type": "^0.2.0"
+        "n7e/wordpress-post-type": "^0.4.0"
     },
     "require-dev": {
         "phpmd/phpmd": "^2.15.0",
@@ -43,7 +46,9 @@
         "nunomaduro/phpinsights": "^v2.12.0",
         "pdepend/pdepend": "^2.16.2",
         "phpunit/phpunit": "^11.5.6",
-        "php-mock/php-mock-phpunit": "^2.12"
+        "php-mock/php-mock-phpunit": "^2.12",
+        "johnpbloch/wordpress-core": "^6.7",
+        "dg/bypass-finals": "*"
     },
     "config": {
         "allow-plugins": {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
+        xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/11.5/phpunit.xsd"
         bootstrap="vendor/autoload.php"
         colors="true"
         beStrictAboutOutputDuringTests="true"
@@ -18,4 +18,10 @@
             <text outputFile="/dev/stdout"/>
         </report>
     </coverage>
+    <extensions>
+        <bootstrap class="DG\BypassFinals\PHPUnitExtension">
+            <parameter name="bypassFinal" value="true"/>
+            <parameter name="bypassReadonly" value="false"/>
+        </bootstrap>
+    </extensions>
 </phpunit>

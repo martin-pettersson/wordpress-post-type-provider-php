@@ -15,11 +15,13 @@ use SlevomatCodingStandard\Sniffs\Classes\SuperfluousExceptionNamingSniff;
 use SlevomatCodingStandard\Sniffs\Classes\SuperfluousInterfaceNamingSniff;
 use SlevomatCodingStandard\Sniffs\Commenting\DocCommentSpacingSniff;
 use SlevomatCodingStandard\Sniffs\ControlStructures\DisallowEmptySniff;
+use SlevomatCodingStandard\Sniffs\Functions\FunctionLengthSniff;
 use SlevomatCodingStandard\Sniffs\TypeHints\DisallowArrayTypeHintSyntaxSniff;
 use SlevomatCodingStandard\Sniffs\TypeHints\DisallowMixedTypeHintSniff;
 use SlevomatCodingStandard\Sniffs\TypeHints\ParameterTypeHintSniff;
 use SlevomatCodingStandard\Sniffs\TypeHints\PropertyTypeHintSniff;
 use SlevomatCodingStandard\Sniffs\TypeHints\ReturnTypeHintSniff;
+use SlevomatCodingStandard\Sniffs\TypeHints\UselessConstantTypeHintSniff;
 
 return [
     'preset' => 'default',
@@ -31,6 +33,7 @@ return [
         ForbiddenNormalClasses::class,
         ForbiddenTraits::class,
         FunctionDeclarationFixer::class,
+        FunctionLengthSniff::class,
         OrderedClassElementsFixer::class,
         ParameterTypeHintSniff::class,
         PropertyTypeHintSniff::class,
@@ -39,7 +42,8 @@ return [
         SpaceAfterNotSniff::class,
         SuperfluousExceptionNamingSniff::class,
         SuperfluousInterfaceNamingSniff::class,
-        TrailingArrayCommaSniff::class
+        TrailingArrayCommaSniff::class,
+        UselessConstantTypeHintSniff::class
     ],
     'config' => [
         LineLengthSniff::class => [
