@@ -1,0 +1,7 @@
+coverage/
+vendor/
+
+.phpunit.result.cache
+composer.lock
+jdepend.svg
+pyramid.svg
