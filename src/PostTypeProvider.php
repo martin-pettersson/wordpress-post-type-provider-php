@@ -15,6 +15,7 @@ use N7e\Configuration\ConfigurationInterface;
 use N7e\DependencyInjection\ContainerBuilderInterface;
 use N7e\DependencyInjection\ContainerInterface;
 use N7e\ServiceProviderInterface;
+use N7e\WordPress\PostType\PostType;
 use N7e\WordPress\PostType\PostTypeRegistry;
 use Override;
 
@@ -29,6 +30,20 @@ class PostTypeProvider implements ServiceProviderInterface
      * @var \N7e\WordPress\PostType\PostTypeRegistry
      */
     private readonly PostTypeRegistry $postTypes;
+
+    /**
+     * Configuration object.
+     *
+     * @var \N7e\Configuration\ConfigurationInterface
+     */
+    private readonly ConfigurationInterface $configuration;
+
+    /**
+     * Dependency injection container.
+     *
+     * @var \N7e\DependencyInjection\ContainerInterface
+     */
+    private readonly ContainerInterface $container;
 
     /**
      * Create a new service provider instance.
@@ -47,11 +62,38 @@ class PostTypeProvider implements ServiceProviderInterface
     #[Override]
     public function load(ContainerInterface $container): void
     {
-        /** @var \N7e\Configuration\ConfigurationInterface $configuration */
-        $configuration = $container->get(ConfigurationInterface::class);
+        $this->configuration = $container->get(ConfigurationInterface::class);
+        $this->container = $container;
 
-        foreach ($configuration->get('postTypes', []) as $postTypeClass) {
-            $this->postTypes->register($container->construct($postTypeClass));
+        foreach ($this->configuration->get('postTypes', []) as $postType) {
+            $this->register($postType);
         }
+    }
+
+    /**
+     * Register given post type definition.
+     *
+     * @param array $postTypeDefinition Arbitrary post type definition.
+     * @throws \N7e\WordPress\InvalidPostTypeDefinitionException If any post type definition is invalid.
+     * @throws \Psr\Container\ContainerExceptionInterface If unable to construct any classes.
+     */
+    private function register(array $postTypeDefinition): void
+    {
+        if (! array_key_exists('postType', $postTypeDefinition)) {
+            throw new InvalidPostTypeDefinitionException();
+        }
+
+        /** @var PostType $postType */
+        $postType = $this->container->construct($postTypeDefinition['postType']);
+
+        foreach ($postTypeDefinition['taxonomies'] ?? [] as $taxonomy) {
+            $postType->taxonomies->register($this->container->construct($taxonomy));
+        }
+
+        foreach ($postTypeDefinition['metaBoxes'] ?? [] as $metaBox) {
+            $postType->metaBoxes->register($this->container->construct($metaBox));
+        }
+
+        $this->postTypes->register($postType);
     }
 }

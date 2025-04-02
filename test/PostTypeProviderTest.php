@@ -14,8 +14,10 @@ namespace N7e\WordPress;
 use N7e\Configuration\ConfigurationInterface;
 use N7e\DependencyInjection\ContainerBuilderInterface;
 use N7e\DependencyInjection\ContainerInterface;
+use N7e\WordPress\PostType\MetaBox;
 use N7e\WordPress\PostType\PostType;
 use N7e\WordPress\PostType\PostTypeRegistry;
+use N7e\WordPress\PostType\Taxonomy;
 use phpmock\phpunit\PHPMock;
 use PHPUnit\Framework\Attributes\Before;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -24,6 +26,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(PostTypeProvider::class)]
+#[CoversClass(InvalidPostTypeDefinitionException::class)]
 class PostTypeProviderTest extends TestCase
 {
     use PHPMock;
@@ -76,7 +79,7 @@ class PostTypeProviderTest extends TestCase
             ->expects($this->once())
             ->method('get')
             ->with('postTypes', [])
-            ->willReturn(['class']);
+            ->willReturn([['postType' => 'class']]);
         $this->containerMock
             ->expects($this->once())
             ->method('construct')
@@ -85,6 +88,88 @@ class PostTypeProviderTest extends TestCase
         $this->getFunctionMock(__NAMESPACE__ . '\\PostType', 'add_action')
             ->expects($this->once())
             ->with($this->anything(), $this->anything());
+
+        $this->provider->load($this->containerMock);
+    }
+
+    #[Test]
+    public function shouldConstructPostTypesWithAssociatedTaxonomies(): void
+    {
+        $invokations = $this->exactly(2);
+
+        $this->configurationMock
+            ->expects($this->once())
+            ->method('get')
+            ->with('postTypes', [])
+            ->willReturn([['postType' => 'class', 'taxonomies' => ['taxonomy']]]);
+        $this->containerMock
+            ->expects($invokations)
+            ->method('construct')
+            ->willReturnCallback(function ($class) use ($invokations) {
+                switch ($invokations->numberOfInvocations()) {
+                    case 1:
+                        $this->assertEquals('class', $class);
+
+                        return $this->getMockBuilder(PostType::class)->getMock();
+                    case 2:
+                        $this->assertEquals('taxonomy', $class);
+
+                        return $this->getMockBuilder(Taxonomy::class)->getMock();
+                }
+
+                return null;
+            });
+        $this->getFunctionMock(__NAMESPACE__ . '\\PostType', 'add_action')
+            ->expects($this->once())
+            ->with($this->anything(), $this->anything());
+
+        $this->provider->load($this->containerMock);
+    }
+
+    #[Test]
+    public function shouldConstructPostTypesWithAssociatedMetaBoxes(): void
+    {
+        $invokations = $this->exactly(2);
+
+        $this->configurationMock
+            ->expects($this->once())
+            ->method('get')
+            ->with('postTypes', [])
+            ->willReturn([['postType' => 'class', 'metaBoxes' => ['meta-box']]]);
+        $this->containerMock
+            ->expects($invokations)
+            ->method('construct')
+            ->willReturnCallback(function ($class) use ($invokations) {
+                switch ($invokations->numberOfInvocations()) {
+                    case 1:
+                        $this->assertEquals('class', $class);
+
+                        return $this->getMockBuilder(PostType::class)->getMock();
+                    case 2:
+                        $this->assertEquals('meta-box', $class);
+
+                        return $this->getMockBuilder(MetaBox::class)->getMock();
+                }
+
+                return null;
+            });
+        $this->getFunctionMock(__NAMESPACE__ . '\\PostType', 'add_action')
+            ->expects($this->once())
+            ->with($this->anything(), $this->anything());
+
+        $this->provider->load($this->containerMock);
+    }
+
+    #[Test]
+    public function shouldThrowExceptionIfInvalidPostTypeDefinition(): void
+    {
+        $this->expectException(InvalidPostTypeDefinitionException::class);
+
+        $this->configurationMock
+            ->expects($this->once())
+            ->method('get')
+            ->with('postTypes', [])
+            ->willReturn([['taxonomies' => [], 'metaBoxes' => ['meta-box']]]);
 
         $this->provider->load($this->containerMock);
     }
