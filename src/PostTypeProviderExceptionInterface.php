@@ -14,6 +14,6 @@ namespace N7e\WordPress;
 /**
  * Represents an arbitrary post type provider exception.
  */
-interface PostTypeExceptionInterface
+interface PostTypeProviderExceptionInterface
 {
 }

@@ -16,7 +16,7 @@ use RuntimeException;
 /**
  * Represents an exception thrown when a post type definition is invalid.
  */
-final class InvalidPostTypeDefinitionException extends RuntimeException implements PostTypeExceptionInterface
+final class InvalidPostTypeDefinitionException extends RuntimeException implements PostTypeProviderExceptionInterface
 {
     /**
      * Create a new exception instance.
@@ -24,7 +24,7 @@ final class InvalidPostTypeDefinitionException extends RuntimeException implemen
     public function __construct()
     {
         parent::__construct(
-            'Post type definitions must contain properties for at least: postType, taxonomies and metaBoxes'
+            'Post type definitions must contain properties for at least: postType'
         );
     }
 }
