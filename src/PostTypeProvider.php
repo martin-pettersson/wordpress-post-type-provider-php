@@ -15,8 +15,6 @@ use N7e\Configuration\ConfigurationInterface;
 use N7e\DependencyInjection\ContainerBuilderInterface;
 use N7e\DependencyInjection\ContainerInterface;
 use N7e\ServiceProviderInterface;
-use N7e\WordPress\PostType\PostType;
-use N7e\WordPress\PostType\PostTypeRegistry;
 use Override;
 
 /**
@@ -27,7 +25,7 @@ class PostTypeProvider implements ServiceProviderInterface
     /**
      * Registered post types.
      *
-     * @var \N7e\WordPress\PostType\PostTypeRegistry
+     * @var \N7e\WordPress\PostTypeRegistry
      */
     private readonly PostTypeRegistry $postTypes;
 
@@ -87,11 +85,11 @@ class PostTypeProvider implements ServiceProviderInterface
         $postType = $this->container->construct($postTypeDefinition['postType']);
 
         foreach ($postTypeDefinition['taxonomies'] ?? [] as $taxonomy) {
-            $postType->taxonomies->register($this->container->construct($taxonomy));
+            $postType->taxonomies->add($this->container->construct($taxonomy));
         }
 
         foreach ($postTypeDefinition['metaBoxes'] ?? [] as $metaBox) {
-            $postType->metaBoxes->register($this->container->construct($metaBox));
+            $postType->metaBoxes->add($this->container->construct($metaBox));
         }
 
         $this->postTypes->register($postType);

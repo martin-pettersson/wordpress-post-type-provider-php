@@ -14,10 +14,6 @@ namespace N7e\WordPress;
 use N7e\Configuration\ConfigurationInterface;
 use N7e\DependencyInjection\ContainerBuilderInterface;
 use N7e\DependencyInjection\ContainerInterface;
-use N7e\WordPress\PostType\MetaBox;
-use N7e\WordPress\PostType\PostType;
-use N7e\WordPress\PostType\PostTypeRegistry;
-use N7e\WordPress\PostType\Taxonomy;
 use phpmock\phpunit\PHPMock;
 use PHPUnit\Framework\Attributes\Before;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -85,7 +81,7 @@ class PostTypeProviderTest extends TestCase
             ->method('construct')
             ->with('class')
             ->willReturn($this->getMockBuilder(PostType::class)->getMock());
-        $this->getFunctionMock(__NAMESPACE__ . '\\PostType', 'add_action')
+        $this->getFunctionMock(__NAMESPACE__, 'add_action')
             ->expects($this->once())
             ->with($this->anything(), $this->anything());
 
@@ -119,7 +115,7 @@ class PostTypeProviderTest extends TestCase
 
                 return null;
             });
-        $this->getFunctionMock(__NAMESPACE__ . '\\PostType', 'add_action')
+        $this->getFunctionMock(__NAMESPACE__, 'add_action')
             ->expects($this->once())
             ->with($this->anything(), $this->anything());
 
@@ -153,7 +149,7 @@ class PostTypeProviderTest extends TestCase
 
                 return null;
             });
-        $this->getFunctionMock(__NAMESPACE__ . '\\PostType', 'add_action')
+        $this->getFunctionMock(__NAMESPACE__, 'add_action')
             ->expects($this->once())
             ->with($this->anything(), $this->anything());
 
